@@ -1,206 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Test Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen p-8">
-    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 class="text-2xl font-bold mb-6">Google Sheets Test Form</h1>
-        
-        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded">
-            <h3 class="font-bold mb-2">Setup Instructions:</h3>
-            <ol class="list-decimal list-inside space-y-1 text-sm">
-                <li>Create a new Google Sheet</li>
-                <li>Copy the Spreadsheet ID from the URL</li>
-                <li>Paste the ID in the input below</li>
-                <li>Use the Apps Script code provided below</li>
-                <li>Deploy and paste the Web App URL</li>
-            </ol>
-        </div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Performance Feedback Form</title>
 
-        <div class="space-y-4 mb-6">
-            <div>
-                <label class="block font-semibold mb-2">Spreadsheet ID:</label>
-                <input type="text" id="spreadsheetId" class="w-full p-2 border rounded" placeholder="Paste your spreadsheet ID here">
-                <p class="text-xs text-gray-500 mt-1">Found in URL: docs.google.com/spreadsheets/d/<strong>SPREADSHEET_ID</strong>/edit</p>
-            </div>
-            
-            <div>
-                <label class="block font-semibold mb-2">Web App URL:</label>
-                <input type="text" id="webAppUrl" class="w-full p-2 border rounded" placeholder="Paste your deployed web app URL here">
-                <p class="text-xs text-gray-500 mt-1">Should end with /exec</p>
-            </div>
-        </div>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        <form id="testForm" class="space-y-4 mb-6">
-            <div>
-                <label class="block font-semibold mb-2">Test Name:</label>
-                <input type="text" name="testName" required class="w-full p-2 border rounded" placeholder="Enter any name">
-            </div>
-            
-            <div>
-                <label class="block font-semibold mb-2">Test Email:</label>
-                <input type="email" name="testEmail" required class="w-full p-2 border rounded" placeholder="Enter any email">
-            </div>
-            
-            <div>
-                <label class="block font-semibold mb-2">Test Number:</label>
-                <input type="number" name="testNumber" required class="w-full p-2 border rounded" placeholder="Enter any number">
-            </div>
-            
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded">
-                Submit Test
-            </button>
-        </form>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-        <div id="status" class="hidden p-4 rounded mb-6"></div>
-        
-        <div id="logs" class="bg-gray-50 p-4 rounded border">
-            <h3 class="font-bold mb-2">Debug Logs:</h3>
-            <div id="logContent" class="text-xs font-mono space-y-1 text-gray-700"></div>
-        </div>
-
-        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded">
-            <h3 class="font-bold mb-2">Google Apps Script Code:</h3>
-            <pre class="text-xs bg-white p-3 rounded border overflow-x-auto"><code>function doPost(e) {
-  var lock = LockService.getScriptLock();
-  lock.tryLock(10000);
-  
-  try {
-    Logger.log('POST received');
-    
-    // Get spreadsheet by ID from parameter
-    var sheetId = e.parameter.spreadsheetId;
-    var ss = SpreadsheetApp.openById(sheetId);
-    var sheet = ss.getSheets()[0];
-    
-    // Add headers if first row is empty
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Timestamp', 'Name', 'Email', 'Number']);
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1e3a8a"
+          }
+        }
+      }
     }
-    
-    // Append data
-    sheet.appendRow([
-      new Date(),
-      e.parameter.testName || '',
-      e.parameter.testEmail || '',
-      e.parameter.testNumber || ''
-    ]);
-    
-    Logger.log('Data saved successfully');
-    
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        status: 'success',
-        message: 'Data saved',
-        row: sheet.getLastRow()
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch(error) {
-    Logger.log('Error: ' + error.toString());
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        status: 'error',
-        message: error.toString()
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
+  </script>
+</head>
 
-function doGet() {
-  return HtmlService.createHtmlOutput('Script is deployed correctly!');
-}</code></pre>
+<body class="bg-gray-100 min-h-screen py-8 px-4 font-sans text-gray-800">
+
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl border-t-4 border-primary">
+
+  <!-- Header -->
+  <div class="p-8 bg-gray-50 border-b flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-primary uppercase">
+        Employee Performance Feedback Form
+      </h1>
+      <p class="text-sm text-red-600 font-semibold mt-1">
+        <i class="fas fa-lock mr-1"></i> CONFIDENTIAL DOCUMENT
+      </p>
+    </div>
+    <div id="statusIndicator" class="hidden text-green-600 text-sm bg-green-50 px-3 py-1 rounded border border-green-200">
+      <i class="fas fa-check-circle mr-1"></i> Draft Saved
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <form id="appraisalForm" class="p-8 space-y-10" novalidate>
+
+    <!-- Part 1 -->
+    <section>
+      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 1: Employee Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <input required name="Employee Name" placeholder="Employee Name" class="p-3 border rounded"/>
+        <input required name="Manager Name" placeholder="Reporting Manager" class="p-3 border rounded"/>
+      </div>
+    </section>
+
+    <!-- Part 2 -->
+    <section>
+      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 2: Core Attributes</h2>
+      <div class="space-y-4">
+        <label>Quality</label>
+        <div class="flex gap-4">
+          <input type="radio" name="Quality" value="1">1
+          <input type="radio" name="Quality" value="2">2
+          <input type="radio" name="Quality" value="3">3
+          <input type="radio" name="Quality" value="4">4
+          <input type="radio" name="Quality" value="5">5
         </div>
+
+        <label>Quantity</label>
+        <div class="flex gap-4">
+          <input type="radio" name="Quantity" value="1">1
+          <input type="radio" name="Quantity" value="2">2
+          <input type="radio" name="Quantity" value="3">3
+          <input type="radio" name="Quantity" value="4">4
+          <input type="radio" name="Quantity" value="5">5
+        </div>
+
+        <label>Timeliness</label>
+        <div class="flex gap-4">
+          <input type="radio" name="Timeliness" value="1">1
+          <input type="radio" name="Timeliness" value="2">2
+          <input type="radio" name="Timeliness" value="3">3
+          <input type="radio" name="Timeliness" value="4">4
+          <input type="radio" name="Timeliness" value="5">5
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 3 -->
+    <section>
+      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 3: Values</h2>
+      <label>Integrity</label>
+      <div class="flex gap-4">
+        <input type="radio" name="Integrity" value="1">1
+        <input type="radio" name="Integrity" value="2">2
+        <input type="radio" name="Integrity" value="3">3
+        <input type="radio" name="Integrity" value="4">4
+        <input type="radio" name="Integrity" value="5">5
+      </div>
+    </section>
+
+    <!-- Part 4 -->
+    <section>
+      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 4: Feedback</h2>
+      <textarea name="Strengths" rows="3" class="w-full p-3 border rounded" placeholder="Strengths"></textarea>
+      <textarea name="Improvements" rows="3" class="w-full p-3 border rounded mt-4" placeholder="Improvements"></textarea>
+    </section>
+
+    <!-- Part 5 -->
+    <section>
+      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 5: Potential & Goals</h2>
+      <div class="space-y-2">
+        <input type="radio" name="Potential" value="Promotion Ready"> Promotion Ready<br/>
+        <input type="radio" name="Potential" value="Well Placed"> Well Placed<br/>
+        <input type="radio" name="Potential" value="Requires Development"> Requires Development
+      </div>
+
+      <input name="Goal 1" placeholder="Goal 1" class="w-full p-3 border rounded mt-4"/>
+      <input name="Goal 2" placeholder="Goal 2" class="w-full p-3 border rounded mt-2"/>
+      <input name="Goal 3" placeholder="Goal 3" class="w-full p-3 border rounded mt-2"/>
+    </section>
+
+    <!-- Part 6 -->
+    <section>
+      <h2 class="font-bold text-lg border-b pb-2 mb-4">Final Summary</h2>
+      <textarea name="Summary" rows="4" class="w-full p-3 border rounded"></textarea>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex justify-between border-t pt-6">
+      <button type="button" onclick="form.reset()" class="text-gray-600">
+        Clear Form
+      </button>
+      <button id="submitBtn" class="bg-primary text-white px-6 py-3 rounded font-bold">
+        Submit Evaluation
+      </button>
     </div>
 
-    <script>
-        const form = document.getElementById('testForm');
-        const statusDiv = document.getElementById('status');
-        const logContent = document.getElementById('logContent');
+  </form>
+</div>
 
-        function addLog(message, type = 'info') {
-            const time = new Date().toLocaleTimeString();
-            const color = type === 'error' ? 'text-red-600' : type === 'success' ? 'text-green-600' : 'text-gray-700';
-            logContent.innerHTML += `<div class="${color}">[${time}] ${message}</div>`;
-            logContent.scrollTop = logContent.scrollHeight;
-        }
+<!-- Success Modal -->
+<div id="successOverlay" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg text-center shadow-lg">
+    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+    <h3 class="text-xl font-bold mb-2">Submission Successful</h3>
+    <button onclick="closeSuccess()" class="bg-primary text-white px-6 py-2 rounded">
+      Close
+    </button>
+  </div>
+</div>
 
-        function showStatus(message, isError = false) {
-            statusDiv.className = `p-4 rounded mb-6 ${isError ? 'bg-red-50 border border-red-200 text-red-700' : 'bg-green-50 border border-green-200 text-green-700'}`;
-            statusDiv.textContent = message;
-            statusDiv.classList.remove('hidden');
-        }
+<script>
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbzIV9ZKrnLXkj20a1-pJaTWkwnXJ_xL_dfBRjUrRZtMUTg2knxfDUm5HeMAmoe0cScOCw/exec";
+const form = document.getElementById("appraisalForm");
+const btn = document.getElementById("submitBtn");
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const spreadsheetId = document.getElementById('spreadsheetId').value.trim();
-            const webAppUrl = document.getElementById('webAppUrl').value.trim();
-            
-            if (!spreadsheetId || !webAppUrl) {
-                showStatus('Please enter both Spreadsheet ID and Web App URL', true);
-                addLog('Missing Spreadsheet ID or Web App URL', 'error');
-                return;
-            }
-            
-            addLog('Starting submission...');
-            addLog(`Target URL: ${webAppUrl}`);
-            addLog(`Spreadsheet ID: ${spreadsheetId}`);
-            
-            const formData = new FormData(form);
-            formData.append('spreadsheetId', spreadsheetId);
-            
-            // Log form data
-            addLog('Form data:');
-            for (let [key, value] of formData.entries()) {
-                addLog(`  ${key}: ${value}`);
-            }
-            
-            try {
-                addLog('Sending POST request...');
-                
-                const response = await fetch(webAppUrl, {
-                    method: 'POST',
-                    body: formData,
-                    redirect: 'follow'
-                });
-                
-                addLog(`Response status: ${response.status}`, 'success');
-                addLog(`Response type: ${response.type}`, 'success');
-                
-                const text = await response.text();
-                addLog(`Response body: ${text}`, 'success');
-                
-                try {
-                    const json = JSON.parse(text);
-                    if (json.status === 'success') {
-                        showStatus(`✓ Success! Data saved to row ${json.row}`);
-                        addLog('✓ Data successfully saved to Google Sheet!', 'success');
-                        form.reset();
-                    } else {
-                        showStatus(`Error: ${json.message}`, true);
-                        addLog(`Error from script: ${json.message}`, 'error');
-                    }
-                } catch {
-                    showStatus('Form submitted (check your sheet)', false);
-                    addLog('Response received (not JSON, check sheet manually)', 'success');
-                }
-                
-            } catch (error) {
-                showStatus(`Error: ${error.message}`, true);
-                addLog(`Fetch error: ${error.message}`, 'error');
-                addLog(`Error details: ${error.toString()}`, 'error');
-            }
-        });
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  btn.disabled = true;
+  btn.innerHTML = "Submitting...";
 
-        addLog('Test form loaded and ready');
-        addLog('Fill in your Spreadsheet ID and Web App URL above to begin');
-    </script>
+  try {
+    const data = new URLSearchParams(new FormData(form));
+    const res = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: data
+    });
+
+    const json = await res.json();
+    if (json.result !== "success") throw new Error(json.message);
+
+    document.getElementById("successOverlay").classList.remove("hidden");
+    form.reset();
+  } catch (err) {
+    alert("Submission failed. Please try again.");
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "Submit Evaluation";
+  }
+});
+
+function closeSuccess() {
+  document.getElementById("successOverlay").classList.add("hidden");
+}
+</script>
+
 </body>
 </html>
