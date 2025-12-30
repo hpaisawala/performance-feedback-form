@@ -1,311 +1,225 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Performance Feedback Form</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        .form-section {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            margin-bottom: 2rem;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-        .rating-cell {
-            transition: all 0.2s;
-        }
-        .rating-cell:hover {
-            background-color: #f1f5f9;
-        }
-        input[type="radio"] {
-            width: 1.25rem;
-            height: 1.25rem;
-            cursor: pointer;
-            accent-color: #2563eb;
-        }
-        textarea {
-            min-height: 120px;
-            transition: border-color 0.2s;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-            ring: 2px;
-        }
-        
-        /* Auto-save Indicator */
-        #saveIndicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #0f172a;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 50;
-        }
-        #saveIndicator.visible {
-            opacity: 1;
-        }
-
-        /* Print Specific Styles */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-                color: black;
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a', // Deep blue for professional look
+                        secondary: '#64748b',
+                    }
+                }
             }
-            .max-w-4xl {
-                max-width: 100%;
-                margin: 0;
-            }
-            .form-section {
-                box-shadow: none;
-                padding: 0;
-                margin-bottom: 2rem;
-                break-inside: avoid;
-                border-radius: 0;
-            }
-            .no-print, button, #saveIndicator, #evidenceWarning {
-                display: none !important;
-            }
-            input[type="text"], input[type="date"], textarea {
-                border: none;
-                padding: 0;
-                background: transparent;
-                width: 100%;
-                resize: none;
-            }
-            textarea {
-                height: auto;
-                min-height: auto;
-                overflow: visible; 
-            }
-            .bg-slate-50 {
-                background-color: transparent !important;
-            }
-            h1 { font-size: 24pt; margin-bottom: 10pt; }
-            h2 { font-size: 16pt; margin-bottom: 8pt; border-bottom: 2px solid #000; }
         }
-    </style>
+    </script>
 </head>
-<body class="p-4 md:p-8">
-    <div id="saveIndicator">Draft Saved</div>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 py-8 px-4">
 
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden border-t-4 border-primary">
+        
         <!-- Header -->
-        <div class="mb-8 text-center flex justify-between items-end">
-            <div class="w-full">
-                <h1 class="text-3xl font-bold text-slate-900">Employee Performance Feedback Form</h1>
-                <p class="text-slate-500 mt-2 font-medium uppercase tracking-wider text-sm">Confidential Document</p>
+        <div class="bg-gray-50 p-8 border-b border-gray-200 flex justify-between items-center flex-wrap gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-primary uppercase tracking-wide">Employee Performance Feedback Form</h1>
+                <p class="text-red-500 font-semibold text-sm mt-1"><i class="fas fa-lock mr-1"></i> CONFIDENTIAL DOCUMENT</p>
             </div>
-            <button onclick="resetForm()" class="no-print text-xs text-red-500 hover:text-red-700 underline absolute top-4 right-4 md:static md:ml-4">
-                Clear Draft
-            </button>
+            <div id="statusIndicator" class="hidden text-green-600 font-medium bg-green-50 px-3 py-1 rounded border border-green-200">
+                <i class="fas fa-check-circle mr-1"></i> Draft Saved
+            </div>
         </div>
 
-        <form id="feedbackForm">
-            <!-- Part 0: Employee Info -->
-            <div class="form-section">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Employee Information</h2>
+        <!-- Form -->
+        <form 
+            action="https://script.google.com/macros/s/AKfycbxFnX_PuAqCRy5uOkb6Cbgul4GdQtIIP-PJCauHmEygJKBuygZpm-pwzHoAKxsBWG3d2A/exec" 
+            method="POST" 
+            class="p-8 space-y-8"
+            target="hidden_iframe"
+            onsubmit="handleSubmit(this)"
+            id="appraisalForm"
+        >
+
+            <!-- Part 1: Employee Information -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">Part 1: Employee Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Employee Name</label>
-                        <input type="text" name="employeeName" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Enter full name">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Employee Name</label>
+                        <input type="text" name="employee_name" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Reporting Manager</label>
-                        <input type="text" name="managerName" required class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Enter your name">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Reporting Manager</label>
+                        <input type="text" name="reporting_manager" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Review Period</label>
-                        <div class="w-full rounded-md bg-slate-100 p-2 border border-slate-200 text-slate-700 font-medium">
-                            Date of Joining to Present
-                        </div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Review Period</label>
+                        <input type="text" name="review_period" placeholder="e.g., Date of Joining to Present" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
                     </div>
+                </div>
+            </section>
+
+            <!-- Rating Definitions Reference -->
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm">
+                <h3 class="font-bold text-blue-800 mb-2">Performance Rating Definitions (Reference Guide)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div><span class="font-bold text-red-600">1: Unsatisfactory</span><br><span class="text-xs text-gray-600">Consistently fails basic requirements. Immediate intervention needed.</span></div>
+                    <div><span class="font-bold text-orange-500">2: Needs Improvement</span><br><span class="text-xs text-gray-600">Inconsistent. Meets some objectives but lacks quality in others.</span></div>
+                    <div><span class="font-bold text-yellow-600">3: Meets Expectations</span><br><span class="text-xs text-gray-600">Solid performer. Consistently achieves targets and skills.</span></div>
+                    <div><span class="font-bold text-green-600">4: Exceeds Expectations</span><br><span class="text-xs text-gray-600">Proactive. Delivers results above standard.</span></div>
+                    <div><span class="font-bold text-blue-600">5: Outstanding</span><br><span class="text-xs text-gray-600">Exceptional. Transformative impact on team/projects.</span></div>
                 </div>
             </div>
 
-            <!-- Part 1: Definitions (Fixed/Visible) -->
-            <div class="form-section bg-slate-50 border-l-4 border-blue-500 p-6">
-                <h2 class="text-lg font-semibold mb-4 text-slate-800">Performance Rating Definitions (Reference Guide)</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 text-xs text-slate-600">
-                    <div class="p-3 bg-white rounded shadow-sm border border-slate-100">
-                        <span class="font-bold text-red-600 block mb-1 text-sm">1: Unsatisfactory</span>
-                        Consistently fails to meet basic role requirements. Immediate intervention is needed.
-                    </div>
-                    <div class="p-3 bg-white rounded shadow-sm border border-slate-100">
-                        <span class="font-bold text-orange-600 block mb-1 text-sm">2: Needs Improvement</span>
-                        Performance is inconsistent. Meets some objectives but lacks quality in others.
-                    </div>
-                    <div class="p-3 bg-white rounded shadow-sm border border-slate-100">
-                        <span class="font-bold text-blue-600 block mb-1 text-sm">3: Meets Expectations</span>
-                        A solid performer. Consistently achieves targets and demonstrates required skills.
-                    </div>
-                    <div class="p-3 bg-white rounded shadow-sm border border-slate-100">
-                        <span class="font-bold text-green-600 block mb-1 text-sm">4: Exceeds Expectations</span>
-                        Regularly goes above and beyond. Proactive and delivers results above standard.
-                    </div>
-                    <div class="p-3 bg-white rounded shadow-sm border border-slate-100">
-                        <span class="font-bold text-purple-600 block mb-1 text-sm">5: Outstanding</span>
-                        Exceptional performance. Has a transformative impact on the team or projects.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Part 2: Core Attributes -->
-            <div class="form-section">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Part 2: Core Attributes Rating</h2>
+            <!-- Part 2: Core Attributes Rating -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 2: Core Attributes Rating</h2>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left min-w-[600px]">
-                        <thead>
-                            <tr class="text-slate-500 text-sm uppercase">
-                                <th class="pb-3 pr-4 font-semibold w-1/2">Attribute</th>
-                                <th class="pb-3 text-center px-2">1</th>
-                                <th class="pb-3 text-center px-2">2</th>
-                                <th class="pb-3 text-center px-2">3</th>
-                                <th class="pb-3 text-center px-2">4</th>
-                                <th class="pb-3 text-center px-2">5</th>
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 font-bold uppercase">
+                            <tr>
+                                <th class="p-3 w-1/2">Attribute</th>
+                                <th class="p-3 text-center">1</th>
+                                <th class="p-3 text-center">2</th>
+                                <th class="p-3 text-center">3</th>
+                                <th class="p-3 text-center">4</th>
+                                <th class="p-3 text-center">5</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <!-- Rows -->
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Quality of Work</span>
-                                    <p class="text-xs text-slate-500">Accuracy, thoroughness, and attention to detail.</p>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- Quality -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Quality of Work</p>
+                                    <p class="text-xs text-gray-500">Accuracy, thoroughness, and attention to detail.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quality" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quality" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quality" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quality" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quality" value="5"></td>
+                                <td class="text-center"><input type="radio" name="rating_quality" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quality" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quality" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quality" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quality" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Quantity of Work</span>
-                                    <p class="text-xs text-slate-500">Volume of work produced within a specific timeframe.</p>
+                            <!-- Quantity -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Quantity of Work</p>
+                                    <p class="text-xs text-gray-500">Volume of work produced within a specific timeframe.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quantity" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quantity" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quantity" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quantity" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_quantity" value="5"></td>
+                                <td class="text-center"><input type="radio" name="rating_quantity" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quantity" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quantity" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quantity" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_quantity" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Timeliness</span>
-                                    <p class="text-xs text-slate-500">Meeting deadlines and managing prioritisation.</p>
+                            <!-- Timeliness -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Timeliness</p>
+                                    <p class="text-xs text-gray-500">Meeting deadlines and managing prioritisation.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="rating_timeliness" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_timeliness" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_timeliness" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_timeliness" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_timeliness" value="5"></td>
+                                <td class="text-center"><input type="radio" name="rating_timeliness" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_timeliness" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_timeliness" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_timeliness" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_timeliness" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Reliability</span>
-                                    <p class="text-xs text-slate-500">Attendance, punctuality, and follow-through.</p>
+                            <!-- Reliability -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Reliability</p>
+                                    <p class="text-xs text-gray-500">Attendance, punctuality, and follow-through.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="rating_reliability" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_reliability" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_reliability" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_reliability" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_reliability" value="5"></td>
+                                <td class="text-center"><input type="radio" name="rating_reliability" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_reliability" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_reliability" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_reliability" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_reliability" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Professional Development</span>
-                                    <p class="text-xs text-slate-500">Growth in skills and application of new knowledge.</p>
+                            <!-- Professional Development -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Professional Development</p>
+                                    <p class="text-xs text-gray-500">Growth in skills and application of new knowledge.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="rating_development" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_development" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_development" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_development" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="rating_development" value="5"></td>
+                                <td class="text-center"><input type="radio" name="rating_dev" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_dev" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_dev" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_dev" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="rating_dev" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </section>
 
             <!-- Part 3: Values Check -->
-            <div class="form-section">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Part 3: Values Check</h2>
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 3: Values Check</h2>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left min-w-[600px]">
-                        <thead>
-                            <tr class="text-slate-500 text-sm uppercase">
-                                <th class="pb-3 pr-4 font-semibold w-1/2">Value</th>
-                                <th class="pb-3 text-center px-2">1</th>
-                                <th class="pb-3 text-center px-2">2</th>
-                                <th class="pb-3 text-center px-2">3</th>
-                                <th class="pb-3 text-center px-2">4</th>
-                                <th class="pb-3 text-center px-2">5</th>
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 font-bold uppercase">
+                            <tr>
+                                <th class="p-3 w-1/2">Value</th>
+                                <th class="p-3 text-center">1</th>
+                                <th class="p-3 text-center">2</th>
+                                <th class="p-3 text-center">3</th>
+                                <th class="p-3 text-center">4</th>
+                                <th class="p-3 text-center">5</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Integrity</span>
-                                    <p class="text-xs text-slate-500">Honesty, ethical behaviour, and accountability.</p>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- Integrity -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Integrity</p>
+                                    <p class="text-xs text-gray-500">Honesty, ethical behaviour, and accountability.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="value_integrity" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="value_integrity" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_integrity" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_integrity" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_integrity" value="5"></td>
+                                <td class="text-center"><input type="radio" name="value_integrity" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_integrity" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_integrity" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_integrity" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_integrity" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Innovation</span>
-                                    <p class="text-xs text-slate-500">Creative solutions and openness to new ways of working.</p>
+                            <!-- Innovation -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Innovation</p>
+                                    <p class="text-xs text-gray-500">Creative solutions and openness to new ways of working.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="value_innovation" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="value_innovation" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_innovation" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_innovation" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_innovation" value="5"></td>
+                                <td class="text-center"><input type="radio" name="value_innovation" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_innovation" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_innovation" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_innovation" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_innovation" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
-                            <tr class="rating-cell">
-                                <td class="py-4 pr-4">
-                                    <span class="font-medium text-slate-800">Respect</span>
-                                    <p class="text-xs text-slate-500">Treating stakeholders with professional courtesy.</p>
+                            <!-- Respect -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Respect</p>
+                                    <p class="text-xs text-gray-500">Treating stakeholders with professional courtesy.</p>
                                 </td>
-                                <td class="text-center py-4"><input type="radio" name="value_respect" value="1" required></td>
-                                <td class="text-center py-4"><input type="radio" name="value_respect" value="2"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_respect" value="3"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_respect" value="4"></td>
-                                <td class="text-center py-4"><input type="radio" name="value_respect" value="5"></td>
+                                <td class="text-center"><input type="radio" name="value_respect" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_respect" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_respect" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_respect" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="value_respect" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </section>
 
-            <!-- Part 4: Qualitative Guidance Section (Fixed/Visible) -->
-            <div class="form-section">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Part 4: Qualitative Feedback</h2>
-                <div id="evidenceWarning" class="hidden mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded">
-                    <strong>Reminder:</strong> You have selected a rating of 1, 2, or 5. Please ensure you provide a "Critical Incident" or specific example in the comments below.
-                </div>
-
-                <div class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100 no-print">
-                    <h3 class="font-semibold text-slate-700 mb-2 text-sm">Reflective Guidance for Managers:</h3>
-                    <ul class="text-xs text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+            <!-- Part 4: Qualitative Feedback -->
+            <section class="space-y-6">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 4: Qualitative Feedback</h2>
+                
+                <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                    <h4 class="font-bold text-sm text-yellow-800 mb-2"><i class="fas fa-lightbulb mr-1"></i> Reflective Guidance for Managers:</h4>
+                    <ul class="text-xs text-yellow-800 space-y-1 list-disc list-inside">
                         <li><strong>Communication:</strong> Does the employee tailor messages for different audiences?</li>
                         <li><strong>Teamwork:</strong> Can you identify a specific instance of proactive support?</li>
                         <li><strong>Problem Solving:</strong> Do they bring you solutions as well as problems?</li>
@@ -316,189 +230,160 @@
                     </ul>
                 </div>
 
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-800 mb-2">Section A: Key Strengths and Behaviours</label>
-                        <textarea name="strengths" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border" placeholder="Consider: Specific projects, saving a process, or positive team influence..."></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-800 mb-2">Section B: Growth Opportunities and Challenges</label>
-                        <textarea name="improvements" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border" placeholder="Consider: The biggest 'blocker' preventing the next level, or specific skill gaps..."></textarea>
-                    </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">Section A: Key Strengths and Behaviours</label>
+                    <textarea name="feedback_strengths" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Enter key strengths..."></textarea>
                 </div>
-            </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">Section B: Growth Opportunities and Challenges</label>
+                    <textarea name="feedback_growth" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Enter areas for improvement..."></textarea>
+                </div>
+            </section>
 
-            <!-- Part 5: Potential and Goals -->
-            <div class="form-section">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Part 5: Future Potential and Upcoming Goals</h2>
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-slate-800 mb-3">Future Potential</label>
+            <!-- Part 5: Future Potential -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 5: Future Potential and Upcoming Goals</h2>
+                
+                <div class="space-y-2">
+                    <label class="block font-semibold text-gray-700">Future Potential Assessment</label>
                     <div class="space-y-2">
-                        <label class="flex items-center space-x-3 text-sm p-3 border rounded-md cursor-pointer hover:bg-slate-50 border-slate-200">
-                            <input type="radio" name="potential" value="promotion" required>
+                        <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="future_potential" value="Promotion Ready" class="h-4 w-4 text-primary focus:ring-primary">
                             <span>Ready for promotion / increased responsibility</span>
                         </label>
-                        <label class="flex items-center space-x-3 text-sm p-3 border rounded-md cursor-pointer hover:bg-slate-50 border-slate-200">
-                            <input type="radio" name="potential" value="horizontal">
+                        <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="future_potential" value="Well Placed" class="h-4 w-4 text-primary focus:ring-primary">
                             <span>Well-placed in current role; focus on horizontal growth</span>
                         </label>
-                        <label class="flex items-center space-x-3 text-sm p-3 border rounded-md cursor-pointer hover:bg-slate-50 border-slate-200">
-                            <input type="radio" name="potential" value="development">
+                        <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="future_potential" value="Requires Development" class="h-4 w-4 text-primary focus:ring-primary">
                             <span>Requires significant development to maintain current role</span>
                         </label>
                     </div>
                 </div>
 
-                <div class="space-y-4">
-                    <label class="block text-sm font-semibold text-slate-800">Top 3 Development Targets for the Next Period</label>
-                    <input type="text" name="goal1" placeholder="Goal 1" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
-                    <input type="text" name="goal2" placeholder="Goal 2" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
-                    <input type="text" name="goal3" placeholder="Goal 3" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                <div class="mt-4">
+                    <label class="block font-semibold text-gray-700 mb-2">Top 3 Development Targets for the Next Period</label>
+                    <textarea name="development_targets" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="1. &#10;2. &#10;3. "></textarea>
                 </div>
+            </section>
+
+            <!-- Part 6: Final Review -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 6: Final Review</h2>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">Manager's Summary Statement</label>
+                    <textarea name="manager_summary" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Overall summary of performance..."></textarea>
+                </div>
+            </section>
+
+            <!-- Footer Actions -->
+            <div class="pt-6 border-t border-gray-200 flex items-center justify-between">
+                <button type="button" onclick="clearDraft()" class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2 rounded border border-transparent hover:border-gray-300 transition-all">
+                    <i class="fas fa-trash-alt mr-2"></i>Clear Draft
+                </button>
+                <button type="submit" id="submitBtn" class="bg-primary hover:bg-blue-800 text-white font-bold py-3 px-8 rounded shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center">
+                    <span>Submit Evaluation</span>
+                    <i class="fas fa-paper-plane ml-2"></i>
+                </button>
             </div>
 
-            <!-- Part 6: Summary (Signatures Removed) -->
-            <div class="form-section">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800 border-b pb-2">Part 6: Final Review</h2>
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold text-slate-800 mb-2">Manager's Summary Statement</label>
-                    <textarea name="summary" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border" placeholder="Overall impact on the team during this period..."></textarea>
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="no-print flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
-                <button type="submit" class="flex-1 bg-blue-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg">
-                    Generate Report Preview
-                </button>
-                <button type="button" onclick="printReport()" class="flex-1 bg-slate-800 text-white font-bold py-4 px-6 rounded-lg hover:bg-slate-900 transition duration-200 shadow-lg">
-                    Print / Save as PDF
-                </button>
-            </div>
         </form>
 
-        <!-- Preview Modal -->
-        <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50 no-print">
-            <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative shadow-2xl">
-                <button onclick="closePreview()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
-                <h3 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-4">Submission Summary</h3>
-                <div id="previewContent" class="space-y-4 text-slate-700 text-sm">
-                    <!-- Dynamic Content -->
+        <!-- Success Modal (Hidden by default) -->
+        <div id="successOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform scale-100 transition-transform">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-2xl text-green-500"></i>
                 </div>
-                <div class="mt-8 flex gap-4">
-                    <button onclick="closePreview()" class="flex-1 bg-slate-100 text-slate-800 font-semibold py-3 rounded-lg hover:bg-slate-200">Edit Form</button>
-                    <button onclick="printReport()" class="flex-1 bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">Print Final Report</button>
-                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Submission Successful</h3>
+                <p class="text-gray-600 mb-6">The performance appraisal has been securely recorded.</p>
+                <button onclick="closeSuccess()" class="bg-primary text-white px-6 py-2 rounded hover:bg-blue-800 transition-colors w-full">
+                    Close
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Hidden Iframe -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
     <script>
-        const FORM_KEY = 'performance_feedback_draft_v1';
-        
-        // Auto-save Logic
-        function saveDraft() {
-            const form = document.getElementById('feedbackForm');
+        // Auto-save draft functionality
+        const form = document.getElementById('appraisalForm');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // Load saved draft on page load
+        window.addEventListener('load', () => {
+            const savedData = localStorage.getItem('appraisalDraft');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(key => {
+                    const field = form.elements[key];
+                    if (field) {
+                        if (field.type === 'radio' || field.type === 'checkbox') {
+                            if (field.value === data[key]) field.checked = true;
+                            // handle radio groups by iterating if needed, simplistic approach here
+                            const radios = form.querySelectorAll(`input[name="${key}"]`);
+                            radios.forEach(r => { if(r.value === data[key]) r.checked = true; });
+                        } else {
+                            field.value = data[key];
+                        }
+                    }
+                });
+                showDraftSaved();
+            }
+        });
+
+        // Save draft on input
+        form.addEventListener('input', (e) => {
             const formData = new FormData(form);
             const data = {};
-            formData.forEach((value, key) => data[key] = value);
-            localStorage.setItem(FORM_KEY, JSON.stringify(data));
-            
-            // Show indicator
-            const indicator = document.getElementById('saveIndicator');
-            indicator.classList.add('visible');
-            setTimeout(() => indicator.classList.remove('visible'), 2000);
-        }
-
-        // Load Draft
-        function loadDraft() {
-            const saved = localStorage.getItem(FORM_KEY);
-            if (!saved) return;
-            
-            const data = JSON.parse(saved);
-            const form = document.getElementById('feedbackForm');
-            
-            Object.keys(data).forEach(key => {
-                const input = form.elements[key];
-                if (!input) return;
-                
-                if (input instanceof RadioNodeList) {
-                    input.value = data[key];
-                } else {
-                    input.value = data[key];
-                }
+            formData.forEach((value, key) => {
+                data[key] = value;
             });
-            checkWarnings(); // Re-check warnings after load
+            localStorage.setItem('appraisalDraft', JSON.stringify(data));
+            showDraftSaved();
+        });
+
+        function showDraftSaved() {
+            statusIndicator.classList.remove('hidden');
+            setTimeout(() => {
+                statusIndicator.classList.add('hidden');
+            }, 3000);
         }
 
-        function resetForm() {
-            if(confirm('Are you sure you want to clear this form and delete the saved draft?')) {
-                localStorage.removeItem(FORM_KEY);
-                document.getElementById('feedbackForm').reset();
-                window.scrollTo(0, 0);
-                location.reload();
+        function clearDraft() {
+            if(confirm('Are you sure you want to clear the form? This cannot be undone.')) {
+                localStorage.removeItem('appraisalDraft');
+                form.reset();
             }
         }
 
-        function printReport() {
-            // Expand textareas for print
-            document.querySelectorAll('textarea').forEach(el => {
-                el.style.height = 'auto';
-                el.style.height = (el.scrollHeight) + 'px';
-            });
-            window.print();
+        // Submission Logic
+        function handleSubmit(form) {
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...`;
+
+            // Wait 2 seconds to simulate network request and allow iframe submission
+            setTimeout(() => {
+                document.getElementById('successOverlay').classList.remove('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                btn.innerHTML = originalText;
+                
+                // Clear draft upon successful submission
+                localStorage.removeItem('appraisalDraft');
+                form.reset();
+            }, 2000);
         }
 
-        function checkWarnings() {
-             const form = document.getElementById('feedbackForm');
-             const warning = document.getElementById('evidenceWarning');
-             const allRadios = form.querySelectorAll('input[type="radio"]:checked');
-             let showWarning = false;
-             allRadios.forEach(radio => {
-                if (['1', '2', '5'].includes(radio.value)) {
-                    showWarning = true;
-                }
-             });
-             
-             if (showWarning) {
-                warning.classList.remove('hidden');
-             } else {
-                warning.classList.add('hidden');
-             }
-        }
-
-        window.onload = function() {
-            const form = document.getElementById('feedbackForm');
-            const modal = document.getElementById('previewModal');
-            const previewContent = document.getElementById('previewContent');
-
-            // Load saved data
-            loadDraft();
-
-            // Listen for changes
-            form.addEventListener('input', () => {
-                saveDraft();
-            });
-
-            form.addEventListener('change', (e) => {
-                saveDraft();
-                if (e.target.type === 'radio') {
-                    checkWarnings();
-                }
-            });
-
-            // Form submission logic
-            form.onsubmit = function(e) {
-fetch('https://script.google.com/macros/s/AKfycbxFnX_PuAqCRy5uOkb6Cbgul4GdQtIIP-PJCauHmEygJKBuygZpm-pwzHoAKxsBWG3d2A/exec', {
-    method: 'POST',
-    body: JSON.stringify(Object.fromEntries(new FormData(form)))
-})
-.then(response => alert("Success!"))
-.catch(error => console.error("Error!", error.message));
-        };
-
-        function closePreview() {
-            document.getElementById('previewModal').classList.add('hidden');
+        function closeSuccess() {
+            document.getElementById('successOverlay').classList.add('hidden');
         }
     </script>
 </body>
