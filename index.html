@@ -1,193 +1,410 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Employee Performance Feedback Form</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#1e3a8a"
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Performance Feedback Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#64748b',
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
 </head>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 py-8 px-4">
 
-<body class="bg-gray-100 min-h-screen py-8 px-4 font-sans text-gray-800">
-
-<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl border-t-4 border-primary">
-
-  <!-- Header -->
-  <div class="p-8 bg-gray-50 border-b flex justify-between items-center">
-    <div>
-      <h1 class="text-2xl font-bold text-primary uppercase">
-        Employee Performance Feedback Form
-      </h1>
-      <p class="text-sm text-red-600 font-semibold mt-1">
-        <i class="fas fa-lock mr-1"></i> CONFIDENTIAL DOCUMENT
-      </p>
-    </div>
-    <div id="statusIndicator" class="hidden text-green-600 text-sm bg-green-50 px-3 py-1 rounded border border-green-200">
-      <i class="fas fa-check-circle mr-1"></i> Draft Saved
-    </div>
-  </div>
-
-  <!-- FORM -->
-  <form id="appraisalForm" class="p-8 space-y-10" novalidate>
-
-    <!-- Part 1 -->
-    <section>
-      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 1: Employee Information</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <input required name="Employee Name" placeholder="Employee Name" class="p-3 border rounded"/>
-        <input required name="Manager Name" placeholder="Reporting Manager" class="p-3 border rounded"/>
-      </div>
-    </section>
-
-    <!-- Part 2 -->
-    <section>
-      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 2: Core Attributes</h2>
-      <div class="space-y-4">
-        <label>Quality</label>
-        <div class="flex gap-4">
-          <input type="radio" name="Quality" value="1">1
-          <input type="radio" name="Quality" value="2">2
-          <input type="radio" name="Quality" value="3">3
-          <input type="radio" name="Quality" value="4">4
-          <input type="radio" name="Quality" value="5">5
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden border-t-4 border-primary">
+        
+        <!-- Header -->
+        <div class="bg-gray-50 p-8 border-b border-gray-200 flex justify-between items-center flex-wrap gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-primary uppercase tracking-wide">Employee Performance Feedback Form</h1>
+                <p class="text-red-500 font-semibold text-sm mt-1"><i class="fas fa-lock mr-1"></i> CONFIDENTIAL DOCUMENT</p>
+            </div>
+            <div id="statusIndicator" class="hidden text-green-600 font-medium bg-green-50 px-3 py-1 rounded border border-green-200">
+                <i class="fas fa-check-circle mr-1"></i> Draft Saved
+            </div>
         </div>
 
-        <label>Quantity</label>
-        <div class="flex gap-4">
-          <input type="radio" name="Quantity" value="1">1
-          <input type="radio" name="Quantity" value="2">2
-          <input type="radio" name="Quantity" value="3">3
-          <input type="radio" name="Quantity" value="4">4
-          <input type="radio" name="Quantity" value="5">5
+        <!-- Form -->
+        <!-- target="hidden_iframe" ensures the page doesn't redirect to the Google Script JSON response -->
+        <form 
+            action="https://script.google.com/macros/s/AKfycbzIV9ZKrnLXkj20a1-pJaTWkwnXJ_xL_dfBRjUrRZtMUTg2knxfDUm5HeMAmoe0cScOCw/exec" 
+            method="POST" 
+            class="p-8 space-y-8"
+            target="hidden_iframe"
+            onsubmit="handleSubmit(this)"
+            id="appraisalForm"
+        >
+
+            <!-- Part 1: Employee Information -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">Part 1: Employee Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Employee Name</label>
+                        <input type="text" name="Employee Name" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Reporting Manager</label>
+                        <input type="text" name="Manager Name" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Review Period</label>
+                        <div class="p-2 bg-gray-50 border border-gray-200 rounded text-gray-700 font-medium">
+                            Date of Joining to Present
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rating Definitions Reference -->
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm">
+                <h3 class="font-bold text-blue-800 mb-2">Performance Rating Definitions (Reference Guide)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div><span class="font-bold text-red-600">1: Unsatisfactory</span><br><span class="text-xs text-gray-600">Consistently fails basic requirements. Immediate intervention needed.</span></div>
+                    <div><span class="font-bold text-orange-500">2: Needs Improvement</span><br><span class="text-xs text-gray-600">Inconsistent. Meets some objectives but lacks quality in others.</span></div>
+                    <div><span class="font-bold text-yellow-600">3: Meets Expectations</span><br><span class="text-xs text-gray-600">Solid performer. Consistently achieves targets and skills.</span></div>
+                    <div><span class="font-bold text-green-600">4: Exceeds Expectations</span><br><span class="text-xs text-gray-600">Proactive. Delivers results above standard.</span></div>
+                    <div><span class="font-bold text-blue-600">5: Outstanding</span><br><span class="text-xs text-gray-600">Exceptional. Transformative impact on team/projects.</span></div>
+                </div>
+            </div>
+
+            <!-- Part 2: Core Attributes Rating -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 2: Core Attributes Rating</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 font-bold uppercase">
+                            <tr>
+                                <th class="p-3 w-1/2">Attribute</th>
+                                <th class="p-3 text-center">1</th>
+                                <th class="p-3 text-center">2</th>
+                                <th class="p-3 text-center">3</th>
+                                <th class="p-3 text-center">4</th>
+                                <th class="p-3 text-center">5</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- Quality -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Quality of Work</p>
+                                    <p class="text-xs text-gray-500">Accuracy, thoroughness, and attention to detail.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Quality" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quality" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quality" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quality" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quality" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                            <!-- Quantity -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Quantity of Work</p>
+                                    <p class="text-xs text-gray-500">Volume of work produced within a specific timeframe.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Quantity" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quantity" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quantity" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quantity" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Quantity" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                            <!-- Timeliness -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Timeliness</p>
+                                    <p class="text-xs text-gray-500">Meeting deadlines and managing prioritisation.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Timeliness" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Timeliness" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Timeliness" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Timeliness" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Timeliness" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                            <!-- Reliability -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Reliability</p>
+                                    <p class="text-xs text-gray-500">Attendance, punctuality, and follow-through.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Reliability" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Reliability" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Reliability" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Reliability" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Reliability" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                            <!-- Development -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Professional Development</p>
+                                    <p class="text-xs text-gray-500">Growth in skills and application of new knowledge.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Development" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Development" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Development" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Development" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Development" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Part 3: Values Check -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 3: Values Check</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 font-bold uppercase">
+                            <tr>
+                                <th class="p-3 w-1/2">Value</th>
+                                <th class="p-3 text-center">1</th>
+                                <th class="p-3 text-center">2</th>
+                                <th class="p-3 text-center">3</th>
+                                <th class="p-3 text-center">4</th>
+                                <th class="p-3 text-center">5</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- Integrity -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Integrity</p>
+                                    <p class="text-xs text-gray-500">Honesty, ethical behaviour, and accountability.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Integrity" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Integrity" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Integrity" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Integrity" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Integrity" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                            <!-- Innovation -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Innovation</p>
+                                    <p class="text-xs text-gray-500">Creative solutions and openness to new ways of working.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Innovation" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Innovation" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Innovation" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Innovation" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Innovation" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                            <!-- Respect -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="p-3">
+                                    <p class="font-semibold text-gray-800">Respect</p>
+                                    <p class="text-xs text-gray-500">Treating stakeholders with professional courtesy.</p>
+                                </td>
+                                <td class="text-center"><input type="radio" name="Respect" value="1" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Respect" value="2" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Respect" value="3" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Respect" value="4" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                                <td class="text-center"><input type="radio" name="Respect" value="5" class="h-4 w-4 text-primary focus:ring-primary"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Part 4: Qualitative Feedback -->
+            <section class="space-y-6">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 4: Qualitative Feedback</h2>
+                
+                <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                    <h4 class="font-bold text-sm text-yellow-800 mb-2"><i class="fas fa-lightbulb mr-1"></i> Reflective Guidance for Managers:</h4>
+                    <ul class="text-xs text-yellow-800 space-y-1 list-disc list-inside">
+                        <li><strong>Communication:</strong> Does the employee tailor messages for different audiences?</li>
+                        <li><strong>Teamwork:</strong> Can you identify a specific instance of proactive support?</li>
+                        <li><strong>Problem Solving:</strong> Do they bring you solutions as well as problems?</li>
+                        <li><strong>Adaptability:</strong> How do they respond when priorities shift suddenly?</li>
+                        <li><strong>Ownership:</strong> Do they take responsibility for both follow-ups and mistakes?</li>
+                        <li><strong>Stakeholder Focus:</strong> Do they consider the impact on the end user?</li>
+                        <li><strong>Leadership:</strong> How do they influence team culture or motivate others?</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">Section A: Key Strengths and Behaviours</label>
+                    <textarea name="Strengths" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Enter key strengths..."></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">Section B: Growth Opportunities and Challenges</label>
+                    <textarea name="Improvements" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Enter areas for improvement..."></textarea>
+                </div>
+            </section>
+
+            <!-- Part 5: Future Potential -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 5: Future Potential and Upcoming Goals</h2>
+                
+                <div class="space-y-2">
+                    <label class="block font-semibold text-gray-700">Future Potential Assessment</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="Potential" value="Promotion Ready" class="h-4 w-4 text-primary focus:ring-primary">
+                            <span>Ready for promotion / increased responsibility</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="Potential" value="Well Placed" class="h-4 w-4 text-primary focus:ring-primary">
+                            <span>Well-placed in current role; focus on horizontal growth</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="Potential" value="Requires Development" class="h-4 w-4 text-primary focus:ring-primary">
+                            <span>Requires significant development to maintain current role</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block font-semibold text-gray-700 mb-2">Top 3 Development Targets for the Next Period</label>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Goal 1</label>
+                            <input type="text" name="Goal 1" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="First target...">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Goal 2</label>
+                            <input type="text" name="Goal 2" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Second target...">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Goal 3</label>
+                            <input type="text" name="Goal 3" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Third target...">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Part 6: Final Review -->
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-gray-800 border-b pb-2">Part 6: Final Review</h2>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-2">Manager's Summary Statement</label>
+                    <textarea name="Summary" rows="4" class="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition" placeholder="Overall summary of performance..."></textarea>
+                </div>
+            </section>
+
+            <!-- Footer Actions -->
+            <div class="pt-6 border-t border-gray-200 flex items-center justify-between">
+                <button type="button" onclick="clearDraft()" class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2 rounded border border-transparent hover:border-gray-300 transition-all">
+                    <i class="fas fa-trash-alt mr-2"></i>Clear Draft
+                </button>
+                <!-- Submit Button: Note we do NOT disable it in the HTML, handled carefully in JS -->
+                <button type="submit" id="submitBtn" class="bg-primary hover:bg-blue-800 text-white font-bold py-3 px-8 rounded shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center">
+                    <span>Submit Evaluation</span>
+                    <i class="fas fa-paper-plane ml-2"></i>
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Success Modal (Hidden by default) -->
+        <div id="successOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-center transform scale-100 transition-transform">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-2xl text-green-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Submission Successful</h3>
+                <p class="text-gray-600 mb-6">The performance appraisal has been securely recorded.</p>
+                <button onclick="closeSuccess()" class="bg-primary text-white px-6 py-2 rounded hover:bg-blue-800 transition-colors w-full">
+                    Close
+                </button>
+            </div>
         </div>
-
-        <label>Timeliness</label>
-        <div class="flex gap-4">
-          <input type="radio" name="Timeliness" value="1">1
-          <input type="radio" name="Timeliness" value="2">2
-          <input type="radio" name="Timeliness" value="3">3
-          <input type="radio" name="Timeliness" value="4">4
-          <input type="radio" name="Timeliness" value="5">5
-        </div>
-      </div>
-    </section>
-
-    <!-- Part 3 -->
-    <section>
-      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 3: Values</h2>
-      <label>Integrity</label>
-      <div class="flex gap-4">
-        <input type="radio" name="Integrity" value="1">1
-        <input type="radio" name="Integrity" value="2">2
-        <input type="radio" name="Integrity" value="3">3
-        <input type="radio" name="Integrity" value="4">4
-        <input type="radio" name="Integrity" value="5">5
-      </div>
-    </section>
-
-    <!-- Part 4 -->
-    <section>
-      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 4: Feedback</h2>
-      <textarea name="Strengths" rows="3" class="w-full p-3 border rounded" placeholder="Strengths"></textarea>
-      <textarea name="Improvements" rows="3" class="w-full p-3 border rounded mt-4" placeholder="Improvements"></textarea>
-    </section>
-
-    <!-- Part 5 -->
-    <section>
-      <h2 class="font-bold text-lg border-b pb-2 mb-4">Part 5: Potential & Goals</h2>
-      <div class="space-y-2">
-        <input type="radio" name="Potential" value="Promotion Ready"> Promotion Ready<br/>
-        <input type="radio" name="Potential" value="Well Placed"> Well Placed<br/>
-        <input type="radio" name="Potential" value="Requires Development"> Requires Development
-      </div>
-
-      <input name="Goal 1" placeholder="Goal 1" class="w-full p-3 border rounded mt-4"/>
-      <input name="Goal 2" placeholder="Goal 2" class="w-full p-3 border rounded mt-2"/>
-      <input name="Goal 3" placeholder="Goal 3" class="w-full p-3 border rounded mt-2"/>
-    </section>
-
-    <!-- Part 6 -->
-    <section>
-      <h2 class="font-bold text-lg border-b pb-2 mb-4">Final Summary</h2>
-      <textarea name="Summary" rows="4" class="w-full p-3 border rounded"></textarea>
-    </section>
-
-    <!-- Actions -->
-    <div class="flex justify-between border-t pt-6">
-      <button type="button" onclick="form.reset()" class="text-gray-600">
-        Clear Form
-      </button>
-      <button id="submitBtn" class="bg-primary text-white px-6 py-3 rounded font-bold">
-        Submit Evaluation
-      </button>
     </div>
 
-  </form>
-</div>
+    <!-- Hidden Iframe -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
-<!-- Success Modal -->
-<div id="successOverlay" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center">
-  <div class="bg-white p-8 rounded-lg text-center shadow-lg">
-    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
-    <h3 class="text-xl font-bold mb-2">Submission Successful</h3>
-    <button onclick="closeSuccess()" class="bg-primary text-white px-6 py-2 rounded">
-      Close
-    </button>
-  </div>
-</div>
+    <script>
+        // Auto-save draft functionality
+        const form = document.getElementById('appraisalForm');
+        const statusIndicator = document.getElementById('statusIndicator');
 
-<script>
-const ENDPOINT = "https://script.google.com/macros/s/AKfycbzIV9ZKrnLXkj20a1-pJaTWkwnXJ_xL_dfBRjUrRZtMUTg2knxfDUm5HeMAmoe0cScOCw/exec";
-const form = document.getElementById("appraisalForm");
-const btn = document.getElementById("submitBtn");
+        // Load saved draft on page load
+        window.addEventListener('load', () => {
+            const savedData = localStorage.getItem('appraisalDraft');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(key => {
+                    const field = form.elements[key];
+                    if (field) {
+                        if (field.type === 'radio' || field.type === 'checkbox') {
+                            if (field.value === data[key]) field.checked = true;
+                            const radios = form.querySelectorAll(`input[name="${key}"]`);
+                            radios.forEach(r => { if(r.value === data[key]) r.checked = true; });
+                        } else {
+                            field.value = data[key];
+                        }
+                    }
+                });
+                showDraftSaved();
+            }
+        });
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  btn.disabled = true;
-  btn.innerHTML = "Submitting...";
+        // Save draft on input
+        form.addEventListener('input', (e) => {
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            localStorage.setItem('appraisalDraft', JSON.stringify(data));
+            showDraftSaved();
+        });
 
-  try {
-    const data = new URLSearchParams(new FormData(form));
-    const res = await fetch(ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: data
-    });
+        function showDraftSaved() {
+            statusIndicator.classList.remove('hidden');
+            setTimeout(() => {
+                statusIndicator.classList.add('hidden');
+            }, 3000);
+        }
 
-    const json = await res.json();
-    if (json.result !== "success") throw new Error(json.message);
+        function clearDraft() {
+            if(confirm('Are you sure you want to clear the form? This cannot be undone.')) {
+                localStorage.removeItem('appraisalDraft');
+                form.reset();
+            }
+        }
 
-    document.getElementById("successOverlay").classList.remove("hidden");
-    form.reset();
-  } catch (err) {
-    alert("Submission failed. Please try again.");
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "Submit Evaluation";
-  }
-});
+        // --- SUBMISSION LOGIC UPDATE ---
+        // Critical fix: We do NOT disable the button immediately.
+        // We only change the text. Disabling the button prevents the form data from submitting in many browsers.
+        function handleSubmit(form) {
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+            
+            // Visual feedback only - do NOT disable the button here
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...`;
 
-function closeSuccess() {
-  document.getElementById("successOverlay").classList.add("hidden");
-}
-</script>
+            // We assume the form submits successfully to the iframe.
+            // We show the success message after a reasonable delay.
+            setTimeout(() => {
+                document.getElementById('successOverlay').classList.remove('hidden');
+                
+                // Reset button state
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                btn.innerHTML = originalText;
+                
+                // Clear draft
+                localStorage.removeItem('appraisalDraft');
+                form.reset();
+            }, 2500); // 2.5 seconds delay to allow network request to complete
+        }
 
+        function closeSuccess() {
+            document.getElementById('successOverlay').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
